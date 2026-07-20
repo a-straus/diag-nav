@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Private Prep Diagnostic Navigator",
+  "version": "1.0",
+  "description": "Keyboard navigation between questions on tests.privateprep.com review pages.",
+  "content_scripts": [
+    {
+      "matches": ["https://tests.privateprep.com/*"],
+      "js": ["nav.js"]
+    }
+  ]
+}
