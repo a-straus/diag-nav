@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Private Prep Diagnostic Navigator",
   "version": "1.0.0",
-  "description": "Keyboard shortcuts for navigating between questions on tests.privateprep.com review pages: arrow keys for prev/next, type a number + Enter to jump.",
+  "description": "Keyboard shortcuts for tests.privateprep.com review pages: arrow keys for prev/next, type a question number + Enter to jump.",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
