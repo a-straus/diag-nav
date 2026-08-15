@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Private Prep Diagnostic Navigator",
-  "version": "1.0.0",
-  "description": "Keyboard shortcuts for tests.privateprep.com review pages: arrow keys for prev/next, type a question number + Enter to jump.",
+  "version": "1.3.0",
+  "description": "Keyboard navigation for Private Prep reviews and the SAT Suite Educator Question Bank, plus improved quiz results.",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -12,6 +12,14 @@
     {
       "matches": ["https://tests.privateprep.com/*"],
       "js": ["nav.js"]
+    },
+    {
+      "matches": ["https://dashboard.privateprep.com/*"],
+      "js": ["quiz-results.js"]
+    },
+    {
+      "matches": ["https://satsuiteeducatorquestionbank.collegeboard.org/*"],
+      "js": ["collegeboard-qbank-nav.js"]
     }
   ]
 }

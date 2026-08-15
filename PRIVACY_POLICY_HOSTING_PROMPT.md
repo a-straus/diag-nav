@@ -23,21 +23,26 @@ Last updated: [today's date]
 
 Private Prep Diagnostic Navigator is a Chrome extension that adds keyboard
 shortcuts for navigating between questions on diagnostic test review pages at
-tests.privateprep.com.
+tests.privateprep.com and question-detail modals in College Board's SAT Suite
+Educator Question Bank. It also displays complete answer choices on authorized
+Private Prep quiz-results pages using information already available to the
+signed-in tutor in Private Prep's quiz library.
 
 **Data collection: none.** This extension does not collect, store, transmit,
-sell, or share any user data of any kind. It has no analytics, no tracking, no
-accounts, and makes no network requests of its own.
+sell, or share any user data of any kind. It has no analytics, no tracking, and
+no accounts.
 
-**How it works.** The extension runs a single content script only on pages
-under tests.privateprep.com. The script listens for keyboard input on those
-pages and activates navigation links that already exist on the page — the same
-links a user would click manually. Nothing the script reads (key presses, page
-content) ever leaves the browser tab.
+**How it works.** The extension listens for keyboard input on supported review
+pages and activates navigation controls that already exist on the page — the
+same controls a user would click manually. On Private Prep quiz-results pages,
+it makes same-site requests to Private Prep pages available through the tutor's
+existing signed-in session so it can display the complete choices belonging to
+that quiz. Nothing is sent to the extension developer or to any third party.
 
-**Permissions.** The extension requests access to tests.privateprep.com only.
-This host permission exists solely so the content script can run on those pages
-and perform the navigation described above.
+**Permissions.** The extension requests access only to tests.privateprep.com,
+dashboard.privateprep.com, and
+satsuiteeducatorquestionbank.collegeboard.org. These host permissions exist
+solely so its content scripts can provide the features described above.
 
 **Third parties.** No data is shared with third parties, because no data is
 collected.

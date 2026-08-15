@@ -1,8 +1,18 @@
 # Private Prep Diagnostic Navigator
 
-A tiny Chrome extension that adds keyboard shortcuts for moving between questions
-when reviewing diagnostic tests on **tests.privateprep.com**. No more clicking
-the tiny Prev/Next buttons or hunting through the number strip.
+A tiny Chrome extension for diagnostic tests on **tests.privateprep.com**:
+keyboard shortcuts for moving between questions on review pages, and deep links
+from the score report's answer sheet straight to each question in review mode.
+No more clicking the tiny Prev/Next buttons or hunting through the number strip.
+
+It also improves quiz results pages on **dashboard.privateprep.com**: every
+question gets its full A–D answer choice list, not just the student's answer
+and the correct one.
+
+On the **SAT Suite Educator Question Bank**, open any question from the results
+table and use **←**/**→** to activate the question modal's own **Back** and
+**Next** buttons. This also follows the site's normal pagination when moving
+through a longer result set.
 
 ## How to use it
 
@@ -27,9 +37,27 @@ A few details worth knowing:
   menu behind the scenes to find the right link.
 - Shortcuts are ignored whenever your cursor is in a text box, so they never
   interfere with typing.
-- The extension only runs on `tests.privateprep.com` pages. It does not read,
-  collect, or send any data anywhere — it just clicks the same links you would
-  click by hand.
+- The extension runs only on the three sites listed in `manifest.json`. It does
+  not collect or send data anywhere; the navigation shortcuts click the same
+  controls you would click by hand.
+
+## Score report deep links
+
+On a score report page (`tests.privateprep.com/scores/...`), open a module's
+**View All Answers** table. Each question number gets a small **↗** link that
+opens that exact question in the review flow, in a new tab — no more counting
+your way through the section by hand. Adaptive Module 2 links point at the
+variant (Lower/Higher) the student actually took.
+
+## Full answer choices on quiz results
+
+On a digital quiz results page (`dashboard.privateprep.com/students/.../
+digital_content_quiz_assignments/.../results`), each question normally shows
+only the student's answer and the correct answer — the other choices are
+missing. The extension adds an **All choices** list (A–D) to every question,
+with the correct answer marked ✓ and the student's wrong pick marked ✗, plus
+a **View in Quiz Library** link in the header that goes to the quiz's admin
+page.
 
 ## Install (from the Chrome Web Store)
 
@@ -43,7 +71,7 @@ page you already had open.
 3. Turn on **Developer mode** (toggle in the top right)
 4. Click **Load unpacked** and select this folder
 
-After editing `nav.js`, hit the reload icon on the extension's card in
+After editing a content script, hit the reload icon on the extension's card in
 `chrome://extensions`, then refresh the test page.
 
 ## How it works (for the curious)
@@ -58,6 +86,31 @@ events on review pages:
   clicks the matching question, and the page navigates normally. Question IDs
   in the URL are not sequential, so links from the page itself are the only
   reliable way to navigate.
+- On score report pages it instead fetches the review section pages (same site,
+  same login) and reads the question order the review app embeds in its own
+  HTML, then adds a link next to each question number in the answer sheet.
 
-No background scripts, no permissions beyond running on the one site, no data
-collection of any kind.
+A second content script, `quiz-results.js`, runs on dashboard quiz results
+pages. The results page doesn't carry the quiz's id, only its title, so the
+script looks the title up in the `/quizzes` library index, fetches that quiz's
+student preview page (`/quizzes/<id>/preview`, the only page that renders all
+answer choices), matches each preview question to the on-page questions by
+their text, and injects the full choice list. If two quizzes share a title it
+picks the one whose questions actually match. All fetches are same-site with
+your existing login.
+
+`collegeboard-qbank-nav.js` runs only on the SAT Suite Educator Question Bank.
+When a question-detail modal is open, it maps the left and right arrow keys to
+the modal's existing **Back** and **Next** buttons. It makes no network requests
+and does nothing when the modal is closed or a form field has focus.
+
+No background scripts and no data collection of any kind.
+
+## Roadmap
+
+- **Qbank integration.** The extension should eventually call into the question
+  bank (`../qbank`): e.g. from a student's wrong answer on a results/review
+  page, generate a practice sheet of ~5 similar questions via qbank's semantic
+  search. See the "Extension integration" entry in `../qbank/BACKLOG.md`.
+- **Auto-release pipeline.** Automate packaging and Chrome Web Store publishing
+  (zip build + store upload) instead of the current manual zip-and-upload flow.

@@ -1,7 +1,13 @@
 // Keyboard navigation for Private Prep diagnostic review pages.
 // Left/Right arrows: prev/next question. Digits + Enter: jump to question number.
+// On score report pages (/scores/<uuid>): adds a deep link next to each question
+// number in the answer sheet that opens that question in the review flow.
 
 (() => {
+  if (location.pathname.startsWith("/scores/")) {
+    initScoreReportLinks();
+    return;
+  }
   let buffer = "";
   let bufferTimer = null;
   let toast = null;
@@ -107,4 +113,67 @@
       showToast("Cancelled");
     }
   });
+
+  // ---- Score report deep links ----
+  // The review app embeds its state as JSON in #app[data-initial-state]:
+  // /review/<uuid>/begin lists every section (id + key matching the score
+  // page's section element ids; adaptive module 2 appears as -lower/-higher
+  // variants with sectionCompleted marking the one taken), and each section's
+  // /instructions page carries sectionQuestionIds in question-position order.
+
+  async function fetchReviewState(path) {
+    try {
+      const res = await fetch(path, { credentials: "same-origin" });
+      if (!res.ok) return null;
+      const doc = new DOMParser().parseFromString(await res.text(), "text/html");
+      const app = doc.getElementById("app");
+      const json = app && app.getAttribute("data-initial-state");
+      return json ? JSON.parse(json) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function addLinks(moduleEl, uuid, sectionId, questionIds) {
+    for (const cell of moduleEl.querySelectorAll(
+      ".AnswerSheetDetails__table__body .row__question"
+    )) {
+      if (cell.querySelector(".diag-nav-review-link")) continue;
+      const n = parseInt(cell.textContent, 10);
+      if (!n || !questionIds[n - 1]) continue;
+      const a = document.createElement("a");
+      a.className = "diag-nav-review-link";
+      a.href = `/review/${uuid}/sections/${sectionId}/questions/${questionIds[n - 1]}`;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.textContent = "↗";
+      a.title = `Review question ${n}`;
+      Object.assign(a.style, { marginLeft: "6px", textDecoration: "none" });
+      cell.appendChild(a);
+    }
+  }
+
+  async function initScoreReportLinks() {
+    const uuid = location.pathname.split("/")[2];
+    if (!uuid) return;
+    const begin = await fetchReviewState(`/review/${uuid}/begin`);
+    const sections = (begin && begin.test && begin.test.sections) || [];
+    for (const moduleEl of document.querySelectorAll("section.SectionScore[id]")) {
+      const key = moduleEl.id;
+      const sec =
+        sections.find((s) => s.key === key) ||
+        sections.find((s) => s.key.startsWith(key + "-") && s.sectionCompleted);
+      if (!sec) continue;
+      const state = await fetchReviewState(
+        `/review/${uuid}/sections/${sec.id}/instructions`
+      );
+      const questionIds = state && state.sectionQuestionIds;
+      if (!questionIds || !questionIds.length) continue;
+      addLinks(moduleEl, uuid, sec.id, questionIds);
+      // The answer sheet re-renders when its filters change; re-add as needed.
+      new MutationObserver(() =>
+        addLinks(moduleEl, uuid, sec.id, questionIds)
+      ).observe(moduleEl, { childList: true, subtree: true });
+    }
+  }
 })();

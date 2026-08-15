@@ -8,7 +8,7 @@ Everything you need for the Developer Dashboard listing. Upload
 **Name:** Private Prep Diagnostic Navigator
 
 **Summary (132 chars max):**
-Keyboard shortcuts for Private Prep diagnostic review pages: arrow keys for prev/next, type a question number + Enter to jump.
+Keyboard shortcuts for navigating questions in Private Prep reviews and College Board's SAT Suite Educator Question Bank.
 
 **Category:** Productivity → Tools
 
@@ -25,17 +25,23 @@ Shortcuts:
 
 A small on-screen indicator shows the number as you type it. Shortcuts are automatically disabled while your cursor is in a text field.
 
-The extension runs only on tests.privateprep.com. It collects no data and simply activates the same navigation links already on the page.
+On the SAT Suite Educator Question Bank, open a question from your results and
+use Left / Right arrow to activate the modal's Back / Next buttons.
+
+The extension runs only on the listed Private Prep and College Board sites. It
+collects no data and activates controls already on the page.
 
 ## Privacy tab
 
 **Single purpose description:**
-Provides keyboard shortcuts to navigate between questions on tests.privateprep.com diagnostic review pages.
+Provides keyboard shortcuts to navigate between questions on supported tutoring and test-preparation review pages.
 
 **Permission justifications:**
 - Content script on `https://tests.privateprep.com/*`: required to listen for keyboard shortcuts and activate the page's existing navigation links. This is the extension's sole function.
+- Content script on `https://dashboard.privateprep.com/*`: required to show the full answer choices already available in the authenticated quiz library on quiz results pages.
+- Content script on `https://satsuiteeducatorquestionbank.collegeboard.org/*`: required to map arrow keys to the question modal's existing Back and Next buttons.
 
-**Data usage:** Select "This item does not collect or use user data." The extension has no storage, no network requests, no analytics.
+**Data usage:** Select "This item does not collect or use user data." The extension has no storage and no analytics. Its Private Prep quiz-results feature makes same-site requests using the user's existing authenticated session; no data leaves the site or browser tab.
 
 **Remote code:** No, all code is packaged in the extension.
 
