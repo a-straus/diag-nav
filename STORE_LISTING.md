@@ -26,7 +26,8 @@ Shortcuts:
 A small on-screen indicator shows the number as you type it. Shortcuts are automatically disabled while your cursor is in a text field.
 
 On the SAT Suite Educator Question Bank, open a question from your results and
-use Left / Right arrow to activate the modal's Back / Next buttons.
+use Left / Right arrow to activate the modal's Back / Next buttons. Press Space
+to add the question to, or remove it from, your PDF selection.
 
 The extension runs only on the listed Private Prep and College Board sites. It
 collects no data and activates controls already on the page.
@@ -39,7 +40,7 @@ Provides keyboard shortcuts to navigate between questions on supported tutoring 
 **Permission justifications:**
 - Content script on `https://tests.privateprep.com/*`: required to listen for keyboard shortcuts and activate the page's existing navigation links. This is the extension's sole function.
 - Content script on `https://dashboard.privateprep.com/*`: required to show the full answer choices already available in the authenticated quiz library on quiz results pages.
-- Content script on `https://satsuiteeducatorquestionbank.collegeboard.org/*`: required to map arrow keys to the question modal's existing Back and Next buttons.
+- Content script on `https://satsuiteeducatorquestionbank.collegeboard.org/*`: required to map arrow keys and Space to the question modal's existing navigation and PDF-selection buttons.
 
 **Data usage:** Select "This item does not collect or use user data." The extension has no storage and no analytics. Its Private Prep quiz-results feature makes same-site requests using the user's existing authenticated session; no data leaves the site or browser tab.
 

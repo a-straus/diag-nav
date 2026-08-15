@@ -12,7 +12,8 @@ and the correct one.
 On the **SAT Suite Educator Question Bank**, open any question from the results
 table and use **←**/**→** to activate the question modal's own **Back** and
 **Next** buttons. This also follows the site's normal pagination when moving
-through a longer result set.
+through a longer result set. Press **Space** to activate **Add to PDF** (or
+**Remove from PDF** when the question is already selected).
 
 ## How to use it
 
@@ -104,8 +105,9 @@ source the live page's own KaTeX instance reads from.
 
 `collegeboard-qbank-nav.js` runs only on the SAT Suite Educator Question Bank.
 When a question-detail modal is open, it maps the left and right arrow keys to
-the modal's existing **Back** and **Next** buttons. It makes no network requests
-and does nothing when the modal is closed or a form field has focus.
+the modal's existing **Back** and **Next** buttons, and Space to its existing
+**Add to PDF** / **Remove from PDF** button. It makes no network requests and
+does nothing when the modal is closed or a form field has focus.
 
 No background scripts, no permissions beyond running on the three sites, no
 data collection of any kind.

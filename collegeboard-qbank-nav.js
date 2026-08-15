@@ -1,6 +1,7 @@
 // Keyboard navigation for question-detail modals in College Board's
 // SAT Suite Educator Question Bank.
 // Left/Right arrows activate the modal's own Back/Next buttons.
+// Space activates the modal's Add to PDF / Remove from PDF button.
 
 (() => {
   const isTyping = (target) => {
@@ -11,17 +12,23 @@
     );
   };
 
-  const modalNavigationButton = (label) => {
+  const enabledModalButton = (predicate) => {
     const modal = document.querySelector("#question-modal");
     if (!modal) return null;
 
     return [...modal.querySelectorAll("button")].find(
       (button) =>
-        button.textContent.trim() === label &&
+        predicate(button) &&
         !button.disabled &&
         button.getAttribute("aria-disabled") !== "true"
     );
   };
+
+  const modalNavigationButton = (label) =>
+    enabledModalButton((button) => button.textContent.trim() === label);
+
+  const modalPdfButton = () =>
+    enabledModalButton((button) => button.classList.contains("pdf-btn"));
 
   document.addEventListener("keydown", (event) => {
     if (
@@ -35,15 +42,17 @@
       return;
     }
 
-    const label =
-      event.key === "ArrowLeft"
-        ? "Back"
-        : event.key === "ArrowRight"
-          ? "Next"
-          : null;
-    if (!label) return;
+    let button = null;
+    if (event.key === "ArrowLeft") {
+      button = modalNavigationButton("Back");
+    } else if (event.key === "ArrowRight") {
+      button = modalNavigationButton("Next");
+    } else if (event.key === " " || event.code === "Space") {
+      button = modalPdfButton();
+    } else {
+      return;
+    }
 
-    const button = modalNavigationButton(label);
     if (!button) return;
 
     event.preventDefault();
