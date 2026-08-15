@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Private Prep Diagnostic Navigator",
   "version": "1.3.0",
-  "description": "Keyboard shortcuts and question links for Private Prep review pages, plus full answer choices on quiz results.",
+  "description": "Keyboard navigation for Private Prep reviews and the SAT Suite Educator Question Bank, plus full answer choices on quiz results.",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -16,6 +16,10 @@
     {
       "matches": ["https://dashboard.privateprep.com/*"],
       "js": ["katex.min.js", "quiz-results.js"]
+    },
+    {
+      "matches": ["https://satsuiteeducatorquestionbank.collegeboard.org/*"],
+      "js": ["collegeboard-qbank-nav.js"]
     }
   ]
 }

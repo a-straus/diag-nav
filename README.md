@@ -9,6 +9,11 @@ It also improves quiz results pages on **dashboard.privateprep.com**: every
 question gets its full A–D answer choice list, not just the student's answer
 and the correct one.
 
+On the **SAT Suite Educator Question Bank**, open any question from the results
+table and use **←**/**→** to activate the question modal's own **Back** and
+**Next** buttons. This also follows the site's normal pagination when moving
+through a longer result set.
+
 ## How to use it
 
 Open any diagnostic review page (the ones with a question on screen and the
@@ -32,9 +37,9 @@ A few details worth knowing:
   menu behind the scenes to find the right link.
 - Shortcuts are ignored whenever your cursor is in a text box, so they never
   interfere with typing.
-- The extension only runs on `tests.privateprep.com` pages. It does not read,
-  collect, or send any data anywhere — it just clicks the same links you would
-  click by hand.
+- The extension runs only on the three sites listed in `manifest.json`. It does
+  not collect or send data anywhere; the navigation shortcuts click the same
+  controls you would click by hand.
 
 ## Score report deep links
 
@@ -66,7 +71,7 @@ page you already had open.
 3. Turn on **Developer mode** (toggle in the top right)
 4. Click **Load unpacked** and select this folder
 
-After editing `nav.js`, hit the reload icon on the extension's card in
+After editing a content script, hit the reload icon on the extension's card in
 `chrome://extensions`, then refresh the test page.
 
 ## How it works (for the curious)
@@ -92,7 +97,24 @@ student preview page (`/quizzes/<id>/preview`, the only page that renders all
 answer choices), matches each preview question to the on-page questions by
 their text, and injects the full choice list. If two quizzes share a title it
 picks the one whose questions actually match. All fetches are same-site with
-your existing login.
+your existing login. The preview HTML is never rendered by the site itself, so
+any math in a choice or stem is inert `.quiz-katex-placeholder` markup; the
+script re-renders it with the bundled `katex.min.js`, using the same LaTeX
+source the live page's own KaTeX instance reads from.
 
-No background scripts, no permissions beyond running on the two Private Prep
-sites, no data collection of any kind.
+`collegeboard-qbank-nav.js` runs only on the SAT Suite Educator Question Bank.
+When a question-detail modal is open, it maps the left and right arrow keys to
+the modal's existing **Back** and **Next** buttons. It makes no network requests
+and does nothing when the modal is closed or a form field has focus.
+
+No background scripts, no permissions beyond running on the three sites, no
+data collection of any kind.
+
+## Roadmap
+
+- **Qbank integration.** The extension should eventually call into the question
+  bank (`../qbank`): e.g. from a student's wrong answer on a results/review
+  page, generate a practice sheet of ~5 similar questions via qbank's semantic
+  search. See the "Extension integration" entry in `../qbank/BACKLOG.md`.
+- **Auto-release pipeline.** Automate packaging and Chrome Web Store publishing
+  (zip build + store upload) instead of the current manual zip-and-upload flow.
