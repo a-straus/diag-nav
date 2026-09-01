@@ -136,16 +136,118 @@
         }
       }
       row.append(bubble, content);
+      // Rows stay neutral so the list reads as a fresh multiple choice; the
+      // review-mode buttons unhide these marks and color the rows on demand.
+      if (isCorrect) row.dataset.diagCorrect = "1";
+      if (isYours) row.dataset.diagYours = "1";
+      if (isYours) {
+        const mark = document.createElement("span");
+        mark.className = "diag-nav-mark-yours";
+        mark.hidden = true;
+        row.append(mark);
+      }
       if (isCorrect) {
-        row.style.color = "#146c43";
-        row.append(" ✓");
-      } else if (isYours) {
-        row.style.color = "#b02a37";
-        row.append(" ✗ (your answer)");
+        const mark = document.createElement("span");
+        mark.className = "diag-nav-mark-correct";
+        mark.hidden = true;
+        mark.textContent = " ✓";
+        row.append(mark);
       }
       dd.append(row);
     }
     result.dl.append(dt, dd);
+    // Choices arrive after the reveal buttons exist; sync them to any
+    // reveal state the tutor already toggled.
+    result.card._diagNavRender?.();
+  }
+
+  // Tutoring review mode: the results page spoils every question (Incorrect
+  // badge, "Your answer", "Correct answer") before the student can re-attempt
+  // it. Hide all of that up front and add two per-question toggle buttons that
+  // reveal the student's answer and the correct answer on demand. The
+  // Correct/Incorrect badge only comes back once both are revealed, since
+  // either one alone would give away whether the student was right.
+  function setupReviewMode(card) {
+    if (card.querySelector(".diag-nav-review-controls")) return;
+    const dl = card.querySelector("dl");
+    if (!dl) return;
+    const badge = card.querySelector("header .badge");
+    if (badge) badge.hidden = true;
+
+    // dt/dd rows to hide, grouped by which button reveals them. "Time spent"
+    // rides with the student's answer — a 5-second answer hints at a guess.
+    const groups = { yours: [], correct: [] };
+    for (const dt of dl.querySelectorAll("dt")) {
+      const label = normalize(dt);
+      const group =
+        label === "Your answer" || label === "Time spent"
+          ? "yours"
+          : label === "Correct answer"
+            ? "correct"
+            : null;
+      if (!group) continue;
+      groups[group].push(dt);
+      const dd = dt.nextElementSibling;
+      if (dd && dd.tagName === "DD") groups[group].push(dd);
+      for (const el of groups[group]) el.hidden = true;
+    }
+
+    const state = { yours: false, correct: false };
+    const btn = {};
+    for (const name of ["yours", "correct"]) {
+      btn[name] = document.createElement("button");
+      btn[name].type = "button";
+      btn[name].className = "small-button";
+      btn[name].addEventListener("click", () => {
+        state[name] = !state[name];
+        render();
+      });
+    }
+
+    function render() {
+      for (const name of ["yours", "correct"]) {
+        for (const el of groups[name]) el.hidden = !state[name];
+        const what = name === "yours" ? "student's answer" : "correct answer";
+        btn[name].textContent = (state[name] ? "Hide " : "Show ") + what;
+      }
+      if (badge) badge.hidden = !(state.yours && state.correct);
+
+      const yoursRow = card.querySelector(".diag-nav-choices [data-diag-yours]");
+      const correctRow = card.querySelector(
+        ".diag-nav-choices [data-diag-correct]"
+      );
+      if (correctRow) {
+        correctRow.style.color = state.correct ? "#146c43" : "";
+        correctRow.querySelector(".diag-nav-mark-correct").hidden =
+          !state.correct;
+      }
+      if (yoursRow) {
+        const wrong = yoursRow !== correctRow;
+        const mark = yoursRow.querySelector(".diag-nav-mark-yours");
+        mark.hidden = !state.yours;
+        mark.textContent =
+          state.yours && state.correct && wrong
+            ? " ✗ (student's answer)"
+            : " (student's answer)";
+        if (wrong) {
+          yoursRow.style.color = !state.yours
+            ? ""
+            : state.correct
+              ? "#b02a37"
+              : "#0d6efd";
+        } else if (state.yours && !state.correct) {
+          yoursRow.style.color = "#0d6efd";
+        }
+      }
+    }
+
+    const controls = document.createElement("div");
+    controls.className = "diag-nav-review-controls";
+    controls.style.cssText = "display:flex;gap:8px;margin-top:12px;";
+    controls.append(btn.yours, btn.correct);
+    card.append(controls);
+    card._diagNavRender = render;
+    render();
   }
 
   function addLibraryLink(quizId) {
@@ -164,6 +266,10 @@
       document.querySelector("header.inline-header h1.title")
     );
     const results = resultCards();
+    // Hide the spoilers on every card immediately, even if the choice lookup
+    // below fails — the reveal buttons then fall back to unhiding the page's
+    // own "Your answer" / "Correct answer" rows.
+    for (const r of results) setupReviewMode(r.card);
     if (!title || !results.length) return;
 
     for (const quizId of await findQuizIds(title)) {

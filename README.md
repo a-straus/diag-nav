@@ -56,9 +56,18 @@ On a digital quiz results page (`dashboard.privateprep.com/students/.../
 digital_content_quiz_assignments/.../results`), each question normally shows
 only the student's answer and the correct answer — the other choices are
 missing. The extension adds an **All choices** list (A–D) to every question,
-with the correct answer marked ✓ and the student's wrong pick marked ✗, plus
-a **View in Quiz Library** link in the header that goes to the quiz's admin
-page.
+plus a **View in Quiz Library** link in the header that goes to the quiz's
+admin page.
+
+The page is also put into a spoiler-free **review mode** for going over the
+quiz with a student: the Correct/Incorrect badge and the "Your answer",
+"Time spent", and "Correct answer" rows are hidden, so each question reads as
+a fresh multiple choice the student can re-attempt. Two buttons under each
+question toggle the reveals — **Show student's answer** (highlights their
+pick in the choice list and unhides their answer and time spent) and **Show
+correct answer** (marks the right choice ✓ in green). The Correct/Incorrect
+badge only reappears once both are revealed, since either one alone would
+give away whether the student was right.
 
 ## Install (from the Chrome Web Store)
 
