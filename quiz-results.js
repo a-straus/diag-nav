@@ -100,6 +100,7 @@
   function injectChoices(result, question) {
     if (!result.dl || result.dl.querySelector(".diag-nav-choices")) return;
     const dt = document.createElement("dt");
+    dt.className = "diag-nav-choices-label";
     dt.textContent = "All choices";
     const dd = document.createElement("dd");
     dd.className = "diag-nav-choices";
@@ -192,9 +193,11 @@
       for (const el of groups[group]) el.hidden = true;
     }
 
-    const state = { yours: false, correct: false };
+    // "choices" hides the injected A–D list too, turning the question into a
+    // free response for when the choices make it too easy.
+    const state = { yours: false, correct: false, choices: true };
     const btn = {};
-    for (const name of ["yours", "correct"]) {
+    for (const name of ["yours", "correct", "choices"]) {
       btn[name] = document.createElement("button");
       btn[name].type = "button";
       btn[name].className = "small-button";
@@ -211,6 +214,13 @@
         btn[name].textContent = (state[name] ? "Hide " : "Show ") + what;
       }
       if (badge) badge.hidden = !(state.yours && state.correct);
+
+      btn.choices.textContent = state.choices ? "Hide choices" : "Show choices";
+      const choicesLabel = card.querySelector(".diag-nav-choices-label");
+      const choicesList = card.querySelector(".diag-nav-choices");
+      if (choicesLabel) choicesLabel.hidden = !state.choices;
+      if (choicesList) choicesList.hidden = !state.choices;
+      btn.choices.hidden = !choicesList;
 
       const yoursRow = card.querySelector(".diag-nav-choices [data-diag-yours]");
       const correctRow = card.querySelector(
@@ -244,7 +254,7 @@
     const controls = document.createElement("div");
     controls.className = "diag-nav-review-controls";
     controls.style.cssText = "display:flex;gap:8px;margin-top:12px;";
-    controls.append(btn.yours, btn.correct);
+    controls.append(btn.yours, btn.correct, btn.choices);
     card.append(controls);
     card._diagNavRender = render;
     render();

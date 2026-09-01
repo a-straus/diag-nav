@@ -65,9 +65,11 @@ quiz with a student: the Correct/Incorrect badge and the "Your answer",
 a fresh multiple choice the student can re-attempt. Two buttons under each
 question toggle the reveals — **Show student's answer** (highlights their
 pick in the choice list and unhides their answer and time spent) and **Show
-correct answer** (marks the right choice ✓ in green). The Correct/Incorrect
-badge only reappears once both are revealed, since either one alone would
-give away whether the student was right.
+correct answer** (marks the right choice ✓ in green). A third button, **Hide
+choices**, hides the A–D list itself, turning the question into a free
+response for when the choices give too much away. The Correct/Incorrect
+badge only reappears once both answers are revealed, since either one alone
+would give away whether the student was right.
 
 ## Install (from the Chrome Web Store)
 
